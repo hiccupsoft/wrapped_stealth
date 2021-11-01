@@ -1,10 +1,7 @@
-/**
- *Submitted for verification at BscScan.com on 2020-09-02
-*/
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.6.8;
 
-pragma solidity 0.8.7;
-
-interface IBEP20 {
+interface iBEP20 {
   /**
    * @dev Returns the amount of tokens in existence.
    */
@@ -340,7 +337,7 @@ contract Ownable is Context {
   }
 }
 
-contract BEP20Token is Context, IBEP20, Ownable {
+contract WXST is Context, iBEP20, Ownable {
   using SafeMath for uint256;
 
   mapping (address => uint256) private _balances;
@@ -365,42 +362,42 @@ contract BEP20Token is Context, IBEP20, Ownable {
   /**
    * @dev Returns the bep token owner.
    */
-  function getOwner() external view returns (address) {
+  function getOwner() external view virtual override returns (address) {
     return owner();
   }
 
   /**
    * @dev Returns the token decimals.
    */
-  function decimals() external view returns (uint8) {
+  function decimals() external view virtual override returns (uint8) {
     return _decimals;
   }
 
   /**
    * @dev Returns the token symbol.
    */
-  function symbol() external view returns (string memory) {
+  function symbol() external view virtual override returns (string memory) {
     return _symbol;
   }
 
   /**
   * @dev Returns the token name.
   */
-  function name() external view returns (string memory) {
+  function name() external view virtual override returns (string memory) {
     return _name;
   }
 
   /**
    * @dev See {BEP20-totalSupply}.
    */
-  function totalSupply() external view returns (uint256) {
+  function totalSupply() external view virtual override returns (uint256) {
     return _totalSupply;
   }
 
   /**
    * @dev See {BEP20-balanceOf}.
    */
-  function balanceOf(address account) external view returns (uint256) {
+  function balanceOf(address account) external view virtual override returns (uint256) {
     return _balances[account];
   }
 
@@ -412,7 +409,7 @@ contract BEP20Token is Context, IBEP20, Ownable {
    * - `recipient` cannot be the zero address.
    * - the caller must have a balance of at least `amount`.
    */
-  function transfer(address recipient, uint256 amount) external returns (bool) {
+  function transfer(address recipient, uint256 amount) external override returns (bool) {
     _transfer(_msgSender(), recipient, amount);
     return true;
   }
@@ -420,7 +417,7 @@ contract BEP20Token is Context, IBEP20, Ownable {
   /**
    * @dev See {BEP20-allowance}.
    */
-  function allowance(address owner, address spender) external view returns (uint256) {
+  function allowance(address owner, address spender) external view override returns (uint256) {
     return _allowances[owner][spender];
   }
 
@@ -431,7 +428,7 @@ contract BEP20Token is Context, IBEP20, Ownable {
    *
    * - `spender` cannot be the zero address.
    */
-  function approve(address spender, uint256 amount) external returns (bool) {
+  function approve(address spender, uint256 amount) external override returns (bool) {
     _approve(_msgSender(), spender, amount);
     return true;
   }
@@ -448,7 +445,7 @@ contract BEP20Token is Context, IBEP20, Ownable {
    * - the caller must have allowance for `sender`'s tokens of at least
    * `amount`.
    */
-  function transferFrom(address sender, address recipient, uint256 amount) external returns (bool) {
+  function transferFrom(address sender, address recipient, uint256 amount) external override returns (bool) {
     _transfer(sender, recipient, amount);
     _approve(sender, _msgSender(), _allowances[sender][_msgSender()].sub(amount, "BEP20: transfer amount exceeds allowance"));
     return true;
@@ -503,12 +500,13 @@ contract BEP20Token is Context, IBEP20, Ownable {
     return true;
   }
 
-  /**
-   * @dev Burn `amount` tokens and decreasing the total supply.
-   */
-  function burn(uint256 amount) public returns (bool) {
+    /**
+    * @dev Destroys `amount` tokens from the caller.
+    *
+    * See {BEP20-_burn}.
+    */
+  function burn(uint256 amount) public virtual {
     _burn(_msgSender(), amount);
-    return true;
   }
 
   /**
@@ -592,13 +590,20 @@ contract BEP20Token is Context, IBEP20, Ownable {
   }
 
   /**
-   * @dev Destroys `amount` tokens from `account`.`amount` is then deducted
-   * from the caller's allowance.
+   * @dev Destroys `amount` tokens from `account`, deducting from the caller's
+   * allowance.
    *
-   * See {_burn} and {_approve}.
+   * See {BEP20-_burn} and {BEP20-allowance}.
+   *
+   * Requirements:
+   *
+   * - the caller must have allowance for ``accounts``'s tokens of at least
+   * `amount`.
    */
-  function _burnFrom(address account, uint256 amount) internal {
+  function burnFrom(address account, uint256 amount) public virtual {
+    uint256 decreasedAllowance = _allowances[account][_msgSender()].sub(amount, "BEP20: burn amount exceeds allowance");
+
+    _approve(account, _msgSender(), decreasedAllowance);
     _burn(account, amount);
-    _approve(account, _msgSender(), _allowances[account][_msgSender()].sub(amount, "BEP20: burn amount exceeds allowance"));
   }
 }
