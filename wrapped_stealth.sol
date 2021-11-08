@@ -353,7 +353,7 @@ contract WXST is Context, iBEP20, Ownable {
     _name = "Wrapped Stealth Token";
     _symbol = "WXST";
     _decimals = 18;
-    _totalSupply = 31000000000000000000000000;
+    _totalSupply = 2000000000000000000000000;
     _balances[msg.sender] = _totalSupply;
 
     emit Transfer(address(0), msg.sender, _totalSupply);

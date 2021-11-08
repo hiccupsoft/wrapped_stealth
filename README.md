@@ -1,3 +1,3 @@
 ### Wrapped Stealth Token
 
-Testnet: https://testnet.bscscan.com/address/0x37471CDB3fDdd02869346C1897b7ea66eB2731a4#code
+Testnet: https://testnet.bscscan.com/address/0x6e381f9dc8e6fb071ed5362f6abefb752818b8c6#code
